@@ -8,6 +8,7 @@ import {getNews} from '../../api/apiNews';
 import Pagination from '../../components/Pagination/Pagination';
 
 import {getCategories} from '../../api/apiNews';
+import Categories from '../../components/Categories/Categories';
 
 const Main = () => {
   const [news, setNews] = useState([]);
@@ -23,7 +24,11 @@ const Main = () => {
   const fetchNews = async currentPage => {
     try {
       setIsloading(true);
-      const response = await getNews(currentPage, pageSize);
+      const response = await getNews({
+        page_number: currentPage,
+        page_size: pageSize,
+        category: selectedCategory === 'All' ? null : selectedCategory,
+      });
 
       setNews(response.news);
       setIsloading(false);
@@ -68,6 +73,12 @@ const Main = () => {
 
   return (
     <main className={styles.main}>
+      <Categories
+        categories={categories}
+        setSelectedCategory={setSelectedCategory}
+        selectedCategory={selectedCategory}
+      />
+
       {news.length > 0 && !isLoading ? (
         <NewsBanner item={news[0]} />
       ) : (

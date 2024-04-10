@@ -29,6 +29,7 @@ const Main = () => {
     fetchNews(currentPage);
   }, [currentPage]);
 
+  // Event Handlers for moving form page to page
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
@@ -52,6 +53,7 @@ const Main = () => {
       ) : (
         <Skeleton type={'banner'} count={1} />
       )}
+      {/* Pagination with arguments */}
       <Pagination
         handleNextPage={handleNextPage}
         handlePreviousPage={handlePreviousPage}
@@ -60,6 +62,14 @@ const Main = () => {
         totalPages={totalPages}
       />
       {!isLoading ? <NewsList news={news} /> : <Skeleton type={'item'} count={10} />}
+
+      <Pagination
+        handleNextPage={handleNextPage}
+        handlePreviousPage={handlePreviousPage}
+        handlePageClick={handlePageClick}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
     </main>
   );
 };

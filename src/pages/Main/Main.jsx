@@ -29,6 +29,22 @@ const Main = () => {
     fetchNews(currentPage);
   }, [currentPage]);
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handlePageClick = pageNumber => {
+    setCurrentPage(pageNumber);
+  };
+
   return (
     <main className={styles.main}>
       {news.length > 0 && !isLoading ? (
@@ -36,7 +52,13 @@ const Main = () => {
       ) : (
         <Skeleton type={'banner'} count={1} />
       )}
-      <Pagination totalPages={totalPages} />
+      <Pagination
+        handleNextPage={handleNextPage}
+        handlePreviousPage={handlePreviousPage}
+        handlePageClick={handlePageClick}
+        currentPage={currentPage}
+        totalPages={totalPages}
+      />
       {!isLoading ? <NewsList news={news} /> : <Skeleton type={'item'} count={10} />}
     </main>
   );

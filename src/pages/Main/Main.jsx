@@ -7,17 +7,29 @@ import {useEffect, useState} from 'react';
 import {getNews} from '../../api/apiNews';
 import Pagination from '../../components/Pagination/Pagination';
 
+import {getCategories} from '../../api/apiNews';
+import Categories from '../../components/Categories/Categories';
+
 const Main = () => {
   const [news, setNews] = useState([]);
   const [isLoading, setIsloading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
   const totalPages = 10;
   const pageSize = 10;
 
+  // Fetch data in general
   const fetchNews = async currentPage => {
     try {
       setIsloading(true);
-      const response = await getNews(currentPage, pageSize);
+      const response = await getNews({
+        page_number: currentPage,
+        page_size: pageSize,
+        category: selectedCategory === 'All' ? null : selectedCategory,
+      });
+
       setNews(response.news);
       setIsloading(false);
     } catch (error) {
@@ -25,9 +37,22 @@ const Main = () => {
     }
   };
 
+  //  fetch data by categories
+  const fetchCategories = async () => {
+    try {
+      const response = await getCategories();
+      setCategories(['All', ...response.categories]);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
   useEffect(() => {
     fetchNews(currentPage);
-  }, [currentPage]);
+  }, [currentPage, selectedCategory]);
 
   // Event Handlers for moving form page to page
   const handleNextPage = () => {
@@ -48,6 +73,12 @@ const Main = () => {
 
   return (
     <main className={styles.main}>
+      <Categories
+        categories={categories}
+        setSelectedCategory={setSelectedCategory}
+        selectedCategory={selectedCategory}
+      />
+
       {news.length > 0 && !isLoading ? (
         <NewsBanner item={news[0]} />
       ) : (
